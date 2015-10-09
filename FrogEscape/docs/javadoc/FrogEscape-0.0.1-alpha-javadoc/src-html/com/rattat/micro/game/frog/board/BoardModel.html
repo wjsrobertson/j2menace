@@ -1,0 +1,1100 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /**<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2006 William Robertson (www.rattat.com)<a name="line.2"></a>
+<FONT color="green">003</FONT>     */<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    package com.rattat.micro.game.frog.board;<a name="line.5"></a>
+<FONT color="green">006</FONT>    <a name="line.6"></a>
+<FONT color="green">007</FONT>    import java.util.Enumeration;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import java.util.Vector;<a name="line.8"></a>
+<FONT color="green">009</FONT>    <a name="line.9"></a>
+<FONT color="green">010</FONT>    import javax.microedition.lcdui.game.Sprite;<a name="line.10"></a>
+<FONT color="green">011</FONT>    import javax.microedition.lcdui.Image;<a name="line.11"></a>
+<FONT color="green">012</FONT>    <a name="line.12"></a>
+<FONT color="green">013</FONT>    import com.rattat.micro.game.frog.board.elements.*;<a name="line.13"></a>
+<FONT color="green">014</FONT>    <a name="line.14"></a>
+<FONT color="green">015</FONT>    import javax.microedition.lcdui.game.TiledLayer;<a name="line.15"></a>
+<FONT color="green">016</FONT>    <a name="line.16"></a>
+<FONT color="green">017</FONT>    /**<a name="line.17"></a>
+<FONT color="green">018</FONT>     * Holds everything needed to actually play the game. Instances of<a name="line.18"></a>
+<FONT color="green">019</FONT>     * channels (roads, river lanes), the status screen, the frog moved by the user<a name="line.19"></a>
+<FONT color="green">020</FONT>     * etc.<a name="line.20"></a>
+<FONT color="green">021</FONT>     *<a name="line.21"></a>
+<FONT color="green">022</FONT>     * @todo Stop calling this "model", remove the view class and move the paint()<a name="line.22"></a>
+<FONT color="green">023</FONT>     *       method in here<a name="line.23"></a>
+<FONT color="green">024</FONT>     *<a name="line.24"></a>
+<FONT color="green">025</FONT>     * @author william@rattat.com<a name="line.25"></a>
+<FONT color="green">026</FONT>     */<a name="line.26"></a>
+<FONT color="green">027</FONT>    public class BoardModel implements HomeListener {<a name="line.27"></a>
+<FONT color="green">028</FONT>        <a name="line.28"></a>
+<FONT color="green">029</FONT>        /**<a name="line.29"></a>
+<FONT color="green">030</FONT>         * User attempts to move left<a name="line.30"></a>
+<FONT color="green">031</FONT>         */<a name="line.31"></a>
+<FONT color="green">032</FONT>        public final static int USERINPUT_LEFT  = 1;<a name="line.32"></a>
+<FONT color="green">033</FONT>        <a name="line.33"></a>
+<FONT color="green">034</FONT>        /**<a name="line.34"></a>
+<FONT color="green">035</FONT>         * User attempts to move right<a name="line.35"></a>
+<FONT color="green">036</FONT>         */<a name="line.36"></a>
+<FONT color="green">037</FONT>        public final static int USERINPUT_RIGHT = 2;<a name="line.37"></a>
+<FONT color="green">038</FONT>        <a name="line.38"></a>
+<FONT color="green">039</FONT>        /**<a name="line.39"></a>
+<FONT color="green">040</FONT>         * User attempts to move up<a name="line.40"></a>
+<FONT color="green">041</FONT>         */<a name="line.41"></a>
+<FONT color="green">042</FONT>        public final static int USERINPUT_UP    = 3;<a name="line.42"></a>
+<FONT color="green">043</FONT>        <a name="line.43"></a>
+<FONT color="green">044</FONT>        /**<a name="line.44"></a>
+<FONT color="green">045</FONT>         * User attempts to move down<a name="line.45"></a>
+<FONT color="green">046</FONT>         */<a name="line.46"></a>
+<FONT color="green">047</FONT>        public final static int USERINPUT_DOWN  = 4;<a name="line.47"></a>
+<FONT color="green">048</FONT>        <a name="line.48"></a>
+<FONT color="green">049</FONT>        /**<a name="line.49"></a>
+<FONT color="green">050</FONT>         * The current level that the player has reached<a name="line.50"></a>
+<FONT color="green">051</FONT>         */<a name="line.51"></a>
+<FONT color="green">052</FONT>        private int currentLevel = 1;<a name="line.52"></a>
+<FONT color="green">053</FONT>        <a name="line.53"></a>
+<FONT color="green">054</FONT>        /**<a name="line.54"></a>
+<FONT color="green">055</FONT>         * The number of levels in this game in total<a name="line.55"></a>
+<FONT color="green">056</FONT>         */<a name="line.56"></a>
+<FONT color="green">057</FONT>        private int numLevels = 5;<a name="line.57"></a>
+<FONT color="green">058</FONT>        <a name="line.58"></a>
+<FONT color="green">059</FONT>        /**<a name="line.59"></a>
+<FONT color="green">060</FONT>         * width / height of one cell in the game in pixels (board is approx 15 * 15 cells)<a name="line.60"></a>
+<FONT color="green">061</FONT>         */<a name="line.61"></a>
+<FONT color="green">062</FONT>        public static final int CELL_SIZE = 16;<a name="line.62"></a>
+<FONT color="green">063</FONT>        <a name="line.63"></a>
+<FONT color="green">064</FONT>        /**<a name="line.64"></a>
+<FONT color="green">065</FONT>         * Number of cells wide of the board<a name="line.65"></a>
+<FONT color="green">066</FONT>         */<a name="line.66"></a>
+<FONT color="green">067</FONT>        private int NUM_CELLS_WIDE = 15;<a name="line.67"></a>
+<FONT color="green">068</FONT>        <a name="line.68"></a>
+<FONT color="green">069</FONT>        /**<a name="line.69"></a>
+<FONT color="green">070</FONT>         * Number of cells high of the board<a name="line.70"></a>
+<FONT color="green">071</FONT>         */<a name="line.71"></a>
+<FONT color="green">072</FONT>        private int NUM_CELLS_HIGH = 16;<a name="line.72"></a>
+<FONT color="green">073</FONT>        <a name="line.73"></a>
+<FONT color="green">074</FONT>        /**<a name="line.74"></a>
+<FONT color="green">075</FONT>         * Width of the board in pixels<a name="line.75"></a>
+<FONT color="green">076</FONT>         */<a name="line.76"></a>
+<FONT color="green">077</FONT>        private int width = CELL_SIZE * NUM_CELLS_WIDE;<a name="line.77"></a>
+<FONT color="green">078</FONT>        <a name="line.78"></a>
+<FONT color="green">079</FONT>        /**<a name="line.79"></a>
+<FONT color="green">080</FONT>         * Height of the board in pixels<a name="line.80"></a>
+<FONT color="green">081</FONT>         */<a name="line.81"></a>
+<FONT color="green">082</FONT>        private int height = CELL_SIZE * NUM_CELLS_HIGH;<a name="line.82"></a>
+<FONT color="green">083</FONT>        <a name="line.83"></a>
+<FONT color="green">084</FONT>        /**<a name="line.84"></a>
+<FONT color="green">085</FONT>         * path to image file used in the frog sprite<a name="line.85"></a>
+<FONT color="green">086</FONT>         */<a name="line.86"></a>
+<FONT color="green">087</FONT>        private String frogImageFile = "/frog.png";<a name="line.87"></a>
+<FONT color="green">088</FONT>        <a name="line.88"></a>
+<FONT color="green">089</FONT>        /**<a name="line.89"></a>
+<FONT color="green">090</FONT>         * The player's frog sprite that gets moved around the screen<a name="line.90"></a>
+<FONT color="green">091</FONT>         */<a name="line.91"></a>
+<FONT color="green">092</FONT>        private Sprite frog = null;<a name="line.92"></a>
+<FONT color="green">093</FONT>        <a name="line.93"></a>
+<FONT color="green">094</FONT>        /**<a name="line.94"></a>
+<FONT color="green">095</FONT>         * Path to image file used to display a dying frog<a name="line.95"></a>
+<FONT color="green">096</FONT>         */<a name="line.96"></a>
+<FONT color="green">097</FONT>        private String deadFrogImageFile = "/deadfrog.png";<a name="line.97"></a>
+<FONT color="green">098</FONT>        <a name="line.98"></a>
+<FONT color="green">099</FONT>        /**<a name="line.99"></a>
+<FONT color="green">100</FONT>         * Sprite used to display a dying frog<a name="line.100"></a>
+<FONT color="green">101</FONT>         */<a name="line.101"></a>
+<FONT color="green">102</FONT>        private Sprite deadFrog = null;<a name="line.102"></a>
+<FONT color="green">103</FONT>        <a name="line.103"></a>
+<FONT color="green">104</FONT>        /**<a name="line.104"></a>
+<FONT color="green">105</FONT>         * Is the frog in play?<a name="line.105"></a>
+<FONT color="green">106</FONT>         */<a name="line.106"></a>
+<FONT color="green">107</FONT>        private boolean frogActive = false;<a name="line.107"></a>
+<FONT color="green">108</FONT>        <a name="line.108"></a>
+<FONT color="green">109</FONT>        /**<a name="line.109"></a>
+<FONT color="green">110</FONT>         * Is the dead frog being displayed<a name="line.110"></a>
+<FONT color="green">111</FONT>         */<a name="line.111"></a>
+<FONT color="green">112</FONT>        private boolean deadFrogActive = false;<a name="line.112"></a>
+<FONT color="green">113</FONT>        <a name="line.113"></a>
+<FONT color="green">114</FONT>        /**<a name="line.114"></a>
+<FONT color="green">115</FONT>         * How long the dead frog has been displayed for<a name="line.115"></a>
+<FONT color="green">116</FONT>         */<a name="line.116"></a>
+<FONT color="green">117</FONT>        private int deadFrogTimer = 0;<a name="line.117"></a>
+<FONT color="green">118</FONT>        <a name="line.118"></a>
+<FONT color="green">119</FONT>        /**<a name="line.119"></a>
+<FONT color="green">120</FONT>         * How long the dead frog will be shown for<a name="line.120"></a>
+<FONT color="green">121</FONT>         */<a name="line.121"></a>
+<FONT color="green">122</FONT>        private int deadFrogLonjevity = 10;<a name="line.122"></a>
+<FONT color="green">123</FONT>        <a name="line.123"></a>
+<FONT color="green">124</FONT>        /**<a name="line.124"></a>
+<FONT color="green">125</FONT>         * Path to the file containing the border images<a name="line.125"></a>
+<FONT color="green">126</FONT>         */<a name="line.126"></a>
+<FONT color="green">127</FONT>        private static String tilesImageFile = "/tiles.png";<a name="line.127"></a>
+<FONT color="green">128</FONT>        <a name="line.128"></a>
+<FONT color="green">129</FONT>        /**<a name="line.129"></a>
+<FONT color="green">130</FONT>         * index of the border image in the tilesImageFile<a name="line.130"></a>
+<FONT color="green">131</FONT>         */<a name="line.131"></a>
+<FONT color="green">132</FONT>        private int borderImageTile = 1;<a name="line.132"></a>
+<FONT color="green">133</FONT>        <a name="line.133"></a>
+<FONT color="green">134</FONT>        /**<a name="line.134"></a>
+<FONT color="green">135</FONT>         * Number of lives the player will be given when starting the game<a name="line.135"></a>
+<FONT color="green">136</FONT>         */<a name="line.136"></a>
+<FONT color="green">137</FONT>        private final static int NUM_LIVES_START = 3;<a name="line.137"></a>
+<FONT color="green">138</FONT>        <a name="line.138"></a>
+<FONT color="green">139</FONT>        /**<a name="line.139"></a>
+<FONT color="green">140</FONT>         * Number of lives the player currently has<a name="line.140"></a>
+<FONT color="green">141</FONT>         */<a name="line.141"></a>
+<FONT color="green">142</FONT>        private int numLives = NUM_LIVES_START;<a name="line.142"></a>
+<FONT color="green">143</FONT>        <a name="line.143"></a>
+<FONT color="green">144</FONT>        /**<a name="line.144"></a>
+<FONT color="green">145</FONT>         * Length of time the frog has been moving for<a name="line.145"></a>
+<FONT color="green">146</FONT>         *<a name="line.146"></a>
+<FONT color="green">147</FONT>         * Used when performing frog movement<a name="line.147"></a>
+<FONT color="green">148</FONT>         */<a name="line.148"></a>
+<FONT color="green">149</FONT>        private int frogMoveCounter = 0;<a name="line.149"></a>
+<FONT color="green">150</FONT>        <a name="line.150"></a>
+<FONT color="green">151</FONT>        /**<a name="line.151"></a>
+<FONT color="green">152</FONT>         * Current frog movement: FROG_NULL, FROG_UP etc<a name="line.152"></a>
+<FONT color="green">153</FONT>         */<a name="line.153"></a>
+<FONT color="green">154</FONT>        private int frogMovement = 0;<a name="line.154"></a>
+<FONT color="green">155</FONT>        <a name="line.155"></a>
+<FONT color="green">156</FONT>        /**<a name="line.156"></a>
+<FONT color="green">157</FONT>         * No frog movement<a name="line.157"></a>
+<FONT color="green">158</FONT>         */<a name="line.158"></a>
+<FONT color="green">159</FONT>        public static final int FROG_NULL = 0;<a name="line.159"></a>
+<FONT color="green">160</FONT>        <a name="line.160"></a>
+<FONT color="green">161</FONT>        /**<a name="line.161"></a>
+<FONT color="green">162</FONT>         * Frog moving up<a name="line.162"></a>
+<FONT color="green">163</FONT>         */<a name="line.163"></a>
+<FONT color="green">164</FONT>        public static final int FROG_UP = 1;<a name="line.164"></a>
+<FONT color="green">165</FONT>        <a name="line.165"></a>
+<FONT color="green">166</FONT>        /**<a name="line.166"></a>
+<FONT color="green">167</FONT>         * Frog moving down<a name="line.167"></a>
+<FONT color="green">168</FONT>         */<a name="line.168"></a>
+<FONT color="green">169</FONT>        public static final int FROG_DOWN = 2;<a name="line.169"></a>
+<FONT color="green">170</FONT>        <a name="line.170"></a>
+<FONT color="green">171</FONT>        /**<a name="line.171"></a>
+<FONT color="green">172</FONT>         * Frog moving left<a name="line.172"></a>
+<FONT color="green">173</FONT>         */<a name="line.173"></a>
+<FONT color="green">174</FONT>        public static final int FROG_LEFT = 3;<a name="line.174"></a>
+<FONT color="green">175</FONT>        <a name="line.175"></a>
+<FONT color="green">176</FONT>        /**<a name="line.176"></a>
+<FONT color="green">177</FONT>         * Frog moving right<a name="line.177"></a>
+<FONT color="green">178</FONT>         */<a name="line.178"></a>
+<FONT color="green">179</FONT>        public static final int FROG_RIGHT = 4;<a name="line.179"></a>
+<FONT color="green">180</FONT>        <a name="line.180"></a>
+<FONT color="green">181</FONT>        /**<a name="line.181"></a>
+<FONT color="green">182</FONT>         * How far to move in the Y direction for every tick that the frog is moving<a name="line.182"></a>
+<FONT color="green">183</FONT>         */<a name="line.183"></a>
+<FONT color="green">184</FONT>        public static final int FROG_VERTICAL_INCREMENT = 2 + CELL_SIZE / 2;<a name="line.184"></a>
+<FONT color="green">185</FONT>        <a name="line.185"></a>
+<FONT color="green">186</FONT>        /**<a name="line.186"></a>
+<FONT color="green">187</FONT>         * How far to move in the X direction for every tick that the frog is moving<a name="line.187"></a>
+<FONT color="green">188</FONT>         */<a name="line.188"></a>
+<FONT color="green">189</FONT>        public static final int FROG_HORIZONTAL_INCREMENT = 2 + CELL_SIZE / 2;<a name="line.189"></a>
+<FONT color="green">190</FONT>        <a name="line.190"></a>
+<FONT color="green">191</FONT>        /**<a name="line.191"></a>
+<FONT color="green">192</FONT>         * How far to move the frog in total in the Y direction<a name="line.192"></a>
+<FONT color="green">193</FONT>         */<a name="line.193"></a>
+<FONT color="green">194</FONT>        public static final int FROG_VERTICAL_TOTAL = CELL_SIZE;<a name="line.194"></a>
+<FONT color="green">195</FONT>        <a name="line.195"></a>
+<FONT color="green">196</FONT>        /**<a name="line.196"></a>
+<FONT color="green">197</FONT>         * How far to move the frog in total in the X direction<a name="line.197"></a>
+<FONT color="green">198</FONT>         */<a name="line.198"></a>
+<FONT color="green">199</FONT>        public static final int FROG_HORIZONTAL_TOTAL = CELL_SIZE;<a name="line.199"></a>
+<FONT color="green">200</FONT>        <a name="line.200"></a>
+<FONT color="green">201</FONT>        /**<a name="line.201"></a>
+<FONT color="green">202</FONT>         * Used to generate different channels for each level<a name="line.202"></a>
+<FONT color="green">203</FONT>         */<a name="line.203"></a>
+<FONT color="green">204</FONT>        private ChannelGenerator channelGenerator = new ChannelGenerator ();<a name="line.204"></a>
+<FONT color="green">205</FONT>        <a name="line.205"></a>
+<FONT color="green">206</FONT>        /**<a name="line.206"></a>
+<FONT color="green">207</FONT>         * Component for displaying the player's status (lives, level, time)<a name="line.207"></a>
+<FONT color="green">208</FONT>         */<a name="line.208"></a>
+<FONT color="green">209</FONT>        private StatusLayer statusLayer = null;<a name="line.209"></a>
+<FONT color="green">210</FONT>        <a name="line.210"></a>
+<FONT color="green">211</FONT>        /**<a name="line.211"></a>
+<FONT color="green">212</FONT>         * Component for dipalying the player's score<a name="line.212"></a>
+<FONT color="green">213</FONT>         */<a name="line.213"></a>
+<FONT color="green">214</FONT>        private ScoreLayer scoreLayer = null;<a name="line.214"></a>
+<FONT color="green">215</FONT>        <a name="line.215"></a>
+<FONT color="green">216</FONT>        /**<a name="line.216"></a>
+<FONT color="green">217</FONT>         * Component that represnts the "home" spaces the player trys to get the<a name="line.217"></a>
+<FONT color="green">218</FONT>         * frog into<a name="line.218"></a>
+<FONT color="green">219</FONT>         */<a name="line.219"></a>
+<FONT color="green">220</FONT>        private Home homeLayer = null;<a name="line.220"></a>
+<FONT color="green">221</FONT>        <a name="line.221"></a>
+<FONT color="green">222</FONT>        /**<a name="line.222"></a>
+<FONT color="green">223</FONT>         * Channel components of the current level<a name="line.223"></a>
+<FONT color="green">224</FONT>         */<a name="line.224"></a>
+<FONT color="green">225</FONT>        private Channel[] channels = new Channel[10];<a name="line.225"></a>
+<FONT color="green">226</FONT>        <a name="line.226"></a>
+<FONT color="green">227</FONT>        /**<a name="line.227"></a>
+<FONT color="green">228</FONT>         * The two border layer omponents<a name="line.228"></a>
+<FONT color="green">229</FONT>         */<a name="line.229"></a>
+<FONT color="green">230</FONT>        private TiledLayer[] borderLayers = new TiledLayer[2];<a name="line.230"></a>
+<FONT color="green">231</FONT>        <a name="line.231"></a>
+<FONT color="green">232</FONT>        /**<a name="line.232"></a>
+<FONT color="green">233</FONT>         * The player's current score<a name="line.233"></a>
+<FONT color="green">234</FONT>         */<a name="line.234"></a>
+<FONT color="green">235</FONT>        private int score = 0;<a name="line.235"></a>
+<FONT color="green">236</FONT>        <a name="line.236"></a>
+<FONT color="green">237</FONT>        /**<a name="line.237"></a>
+<FONT color="green">238</FONT>         * points awarded for each successful jump<a name="line.238"></a>
+<FONT color="green">239</FONT>         */<a name="line.239"></a>
+<FONT color="green">240</FONT>        private int POINTS_JUMP = 20;<a name="line.240"></a>
+<FONT color="green">241</FONT>        <a name="line.241"></a>
+<FONT color="green">242</FONT>        /**<a name="line.242"></a>
+<FONT color="green">243</FONT>         * points awarded for each frog that gets to the home position<a name="line.243"></a>
+<FONT color="green">244</FONT>         */<a name="line.244"></a>
+<FONT color="green">245</FONT>        private int POINTS_FROG_HOME = 50;<a name="line.245"></a>
+<FONT color="green">246</FONT>        <a name="line.246"></a>
+<FONT color="green">247</FONT>        /**<a name="line.247"></a>
+<FONT color="green">248</FONT>         * points awarded for each completed level<a name="line.248"></a>
+<FONT color="green">249</FONT>         */<a name="line.249"></a>
+<FONT color="green">250</FONT>        private int POINTS_LEVEL = 1000;<a name="line.250"></a>
+<FONT color="green">251</FONT>        <a name="line.251"></a>
+<FONT color="green">252</FONT>        /**<a name="line.252"></a>
+<FONT color="green">253</FONT>         * points awarded for each second remaining when a frog gets home<a name="line.253"></a>
+<FONT color="green">254</FONT>         *<a name="line.254"></a>
+<FONT color="green">255</FONT>         * @todo unused<a name="line.255"></a>
+<FONT color="green">256</FONT>         */<a name="line.256"></a>
+<FONT color="green">257</FONT>        private int POINTS_SECOND_REMAINING = 10;<a name="line.257"></a>
+<FONT color="green">258</FONT>        <a name="line.258"></a>
+<FONT color="green">259</FONT>        /**<a name="line.259"></a>
+<FONT color="green">260</FONT>         * points awarded for getting a lady frog home<a name="line.260"></a>
+<FONT color="green">261</FONT>         *<a name="line.261"></a>
+<FONT color="green">262</FONT>         * @todo unused<a name="line.262"></a>
+<FONT color="green">263</FONT>         */<a name="line.263"></a>
+<FONT color="green">264</FONT>        private int POINTS_LADY_FROG_HOME = 200;<a name="line.264"></a>
+<FONT color="green">265</FONT>        <a name="line.265"></a>
+<FONT color="green">266</FONT>        /**<a name="line.266"></a>
+<FONT color="green">267</FONT>         * points awarded for eating an insect<a name="line.267"></a>
+<FONT color="green">268</FONT>         *<a name="line.268"></a>
+<FONT color="green">269</FONT>         * @todo unused<a name="line.269"></a>
+<FONT color="green">270</FONT>         */<a name="line.270"></a>
+<FONT color="green">271</FONT>        private int POINTS_EAT_INSECT = 200;<a name="line.271"></a>
+<FONT color="green">272</FONT>        <a name="line.272"></a>
+<FONT color="green">273</FONT>        /**<a name="line.273"></a>
+<FONT color="green">274</FONT>         * The highest point on the screen that the frog has reached<a name="line.274"></a>
+<FONT color="green">275</FONT>         *<a name="line.275"></a>
+<FONT color="green">276</FONT>         * This is used in scoring - for every successful jump forwards the<a name="line.276"></a>
+<FONT color="green">277</FONT>         * player recieves 20 points. We keep track of the highest position reached<a name="line.277"></a>
+<FONT color="green">278</FONT>         * so that if a successful jump passes this point we can award points.<a name="line.278"></a>
+<FONT color="green">279</FONT>         */<a name="line.279"></a>
+<FONT color="green">280</FONT>        private int uppermostYOrdinate = 0;<a name="line.280"></a>
+<FONT color="green">281</FONT>        <a name="line.281"></a>
+<FONT color="green">282</FONT>        /**<a name="line.282"></a>
+<FONT color="green">283</FONT>         * The identifiers for each of the channels - just the integer<a name="line.283"></a>
+<FONT color="green">284</FONT>         * representation of the channel that is used in array indexes<a name="line.284"></a>
+<FONT color="green">285</FONT>         */<a name="line.285"></a>
+<FONT color="green">286</FONT>        private int[] channelIdentifiers = {<a name="line.286"></a>
+<FONT color="green">287</FONT>            ChannelGenerator.CHANNEL_RIVER_0, ChannelGenerator.CHANNEL_RIVER_1,<a name="line.287"></a>
+<FONT color="green">288</FONT>            ChannelGenerator.CHANNEL_RIVER_2, ChannelGenerator.CHANNEL_RIVER_3,<a name="line.288"></a>
+<FONT color="green">289</FONT>            ChannelGenerator.CHANNEL_RIVER_4, ChannelGenerator.CHANNEL_ROAD_0,<a name="line.289"></a>
+<FONT color="green">290</FONT>            ChannelGenerator.CHANNEL_ROAD_1,  ChannelGenerator.CHANNEL_ROAD_2,<a name="line.290"></a>
+<FONT color="green">291</FONT>            ChannelGenerator.CHANNEL_ROAD_3,  ChannelGenerator.CHANNEL_ROAD_4<a name="line.291"></a>
+<FONT color="green">292</FONT>        };<a name="line.292"></a>
+<FONT color="green">293</FONT>        <a name="line.293"></a>
+<FONT color="green">294</FONT>        /**<a name="line.294"></a>
+<FONT color="green">295</FONT>         * Holds the Y offsets of the ten channels<a name="line.295"></a>
+<FONT color="green">296</FONT>         */<a name="line.296"></a>
+<FONT color="green">297</FONT>        private int[] channelOffsetY = new int[10];<a name="line.297"></a>
+<FONT color="green">298</FONT>        <a name="line.298"></a>
+<FONT color="green">299</FONT>        /**<a name="line.299"></a>
+<FONT color="green">300</FONT>         * Holds BoardListeners that will be notified of BoardEvents<a name="line.300"></a>
+<FONT color="green">301</FONT>         */<a name="line.301"></a>
+<FONT color="green">302</FONT>        private Vector listeners = new Vector ();<a name="line.302"></a>
+<FONT color="green">303</FONT>        <a name="line.303"></a>
+<FONT color="green">304</FONT>        /**<a name="line.304"></a>
+<FONT color="green">305</FONT>         * The number of game ticks that the player has to complete a level<a name="line.305"></a>
+<FONT color="green">306</FONT>         */<a name="line.306"></a>
+<FONT color="green">307</FONT>        private static final int LEVEL_TIME = 600;<a name="line.307"></a>
+<FONT color="green">308</FONT>        <a name="line.308"></a>
+<FONT color="green">309</FONT>        /**<a name="line.309"></a>
+<FONT color="green">310</FONT>         * Creates a new instance of BoardModel<a name="line.310"></a>
+<FONT color="green">311</FONT>         */<a name="line.311"></a>
+<FONT color="green">312</FONT>        public BoardModel () {<a name="line.312"></a>
+<FONT color="green">313</FONT>            init ();<a name="line.313"></a>
+<FONT color="green">314</FONT>        }<a name="line.314"></a>
+<FONT color="green">315</FONT>        <a name="line.315"></a>
+<FONT color="green">316</FONT>        /**<a name="line.316"></a>
+<FONT color="green">317</FONT>         * Get the width of this board in pixels<a name="line.317"></a>
+<FONT color="green">318</FONT>         */<a name="line.318"></a>
+<FONT color="green">319</FONT>        public int getWidth () {<a name="line.319"></a>
+<FONT color="green">320</FONT>            return width;<a name="line.320"></a>
+<FONT color="green">321</FONT>        }<a name="line.321"></a>
+<FONT color="green">322</FONT>        <a name="line.322"></a>
+<FONT color="green">323</FONT>        /**<a name="line.323"></a>
+<FONT color="green">324</FONT>         * Get the height of this board in pixels<a name="line.324"></a>
+<FONT color="green">325</FONT>         */<a name="line.325"></a>
+<FONT color="green">326</FONT>        public int getHeight () {<a name="line.326"></a>
+<FONT color="green">327</FONT>            return height;<a name="line.327"></a>
+<FONT color="green">328</FONT>        }<a name="line.328"></a>
+<FONT color="green">329</FONT>        <a name="line.329"></a>
+<FONT color="green">330</FONT>        /**<a name="line.330"></a>
+<FONT color="green">331</FONT>         * Initialise all of the components that make up the board<a name="line.331"></a>
+<FONT color="green">332</FONT>         */<a name="line.332"></a>
+<FONT color="green">333</FONT>        private void init () {<a name="line.333"></a>
+<FONT color="green">334</FONT>            try {<a name="line.334"></a>
+<FONT color="green">335</FONT>                createFrog ();<a name="line.335"></a>
+<FONT color="green">336</FONT>            } catch (Exception e) {<a name="line.336"></a>
+<FONT color="green">337</FONT>                System.err.println ("Error creating frog: " + e);<a name="line.337"></a>
+<FONT color="green">338</FONT>            }<a name="line.338"></a>
+<FONT color="green">339</FONT>            <a name="line.339"></a>
+<FONT color="green">340</FONT>            try {<a name="line.340"></a>
+<FONT color="green">341</FONT>                createDeadFrog ();<a name="line.341"></a>
+<FONT color="green">342</FONT>            } catch (Exception e) {<a name="line.342"></a>
+<FONT color="green">343</FONT>                System.err.println ("Error creating frog: " + e);<a name="line.343"></a>
+<FONT color="green">344</FONT>            }<a name="line.344"></a>
+<FONT color="green">345</FONT>            <a name="line.345"></a>
+<FONT color="green">346</FONT>            createStatusLayer ();<a name="line.346"></a>
+<FONT color="green">347</FONT>            createScoreLayer ();<a name="line.347"></a>
+<FONT color="green">348</FONT>            createHomeLayer ();<a name="line.348"></a>
+<FONT color="green">349</FONT>            <a name="line.349"></a>
+<FONT color="green">350</FONT>            initChannelOffsetY ();<a name="line.350"></a>
+<FONT color="green">351</FONT>            createChannels ();<a name="line.351"></a>
+<FONT color="green">352</FONT>    <a name="line.352"></a>
+<FONT color="green">353</FONT>            createBorderLayers ();<a name="line.353"></a>
+<FONT color="green">354</FONT>        }<a name="line.354"></a>
+<FONT color="green">355</FONT>        <a name="line.355"></a>
+<FONT color="green">356</FONT>        /**<a name="line.356"></a>
+<FONT color="green">357</FONT>         * Determine the Y offsets for each of the Channels<a name="line.357"></a>
+<FONT color="green">358</FONT>         */<a name="line.358"></a>
+<FONT color="green">359</FONT>        private void initChannelOffsetY () {<a name="line.359"></a>
+<FONT color="green">360</FONT>            int channelsOffset = scoreLayer.getHeight () + homeLayer.getHeight ();<a name="line.360"></a>
+<FONT color="green">361</FONT>            <a name="line.361"></a>
+<FONT color="green">362</FONT>            // loop better? nah<a name="line.362"></a>
+<FONT color="green">363</FONT>            <a name="line.363"></a>
+<FONT color="green">364</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_RIVER_0] = channelsOffset;<a name="line.364"></a>
+<FONT color="green">365</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_RIVER_1] = channelsOffset + CELL_SIZE;<a name="line.365"></a>
+<FONT color="green">366</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_RIVER_2] = channelsOffset + 2*CELL_SIZE;<a name="line.366"></a>
+<FONT color="green">367</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_RIVER_3] = channelsOffset + 3*CELL_SIZE;<a name="line.367"></a>
+<FONT color="green">368</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_RIVER_4] = channelsOffset + 4*CELL_SIZE;<a name="line.368"></a>
+<FONT color="green">369</FONT>            <a name="line.369"></a>
+<FONT color="green">370</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_ROAD_0] = channelsOffset + 6*CELL_SIZE;<a name="line.370"></a>
+<FONT color="green">371</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_ROAD_1] = channelsOffset + 7*CELL_SIZE;<a name="line.371"></a>
+<FONT color="green">372</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_ROAD_2] = channelsOffset + 8*CELL_SIZE;<a name="line.372"></a>
+<FONT color="green">373</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_ROAD_3] = channelsOffset + 9*CELL_SIZE;<a name="line.373"></a>
+<FONT color="green">374</FONT>            channelOffsetY[ChannelGenerator.CHANNEL_ROAD_4] = channelsOffset + 10*CELL_SIZE;<a name="line.374"></a>
+<FONT color="green">375</FONT>        }<a name="line.375"></a>
+<FONT color="green">376</FONT>        <a name="line.376"></a>
+<FONT color="green">377</FONT>        /**<a name="line.377"></a>
+<FONT color="green">378</FONT>         * Get / create the frog Sprite<a name="line.378"></a>
+<FONT color="green">379</FONT>         *<a name="line.379"></a>
+<FONT color="green">380</FONT>         * @return Sprite<a name="line.380"></a>
+<FONT color="green">381</FONT>         */<a name="line.381"></a>
+<FONT color="green">382</FONT>        private Sprite createFrog () throws Exception {<a name="line.382"></a>
+<FONT color="green">383</FONT>            if (frog == null) {<a name="line.383"></a>
+<FONT color="green">384</FONT>                Image image = Image.createImage (frogImageFile);<a name="line.384"></a>
+<FONT color="green">385</FONT>                frog = new Sprite (image);<a name="line.385"></a>
+<FONT color="green">386</FONT>                frog.defineReferencePixel (frog.getWidth ()/2, frog.getHeight ()/2);<a name="line.386"></a>
+<FONT color="green">387</FONT>            }<a name="line.387"></a>
+<FONT color="green">388</FONT>            <a name="line.388"></a>
+<FONT color="green">389</FONT>            return frog;<a name="line.389"></a>
+<FONT color="green">390</FONT>        }<a name="line.390"></a>
+<FONT color="green">391</FONT>        <a name="line.391"></a>
+<FONT color="green">392</FONT>        /**<a name="line.392"></a>
+<FONT color="green">393</FONT>         * Get the frog sprite - the one the user moves around the screen<a name="line.393"></a>
+<FONT color="green">394</FONT>         */<a name="line.394"></a>
+<FONT color="green">395</FONT>        public Sprite getFrog () {<a name="line.395"></a>
+<FONT color="green">396</FONT>            return frog;<a name="line.396"></a>
+<FONT color="green">397</FONT>        }<a name="line.397"></a>
+<FONT color="green">398</FONT>        <a name="line.398"></a>
+<FONT color="green">399</FONT>        /**<a name="line.399"></a>
+<FONT color="green">400</FONT>         * Get the dead frog sprite<a name="line.400"></a>
+<FONT color="green">401</FONT>         */<a name="line.401"></a>
+<FONT color="green">402</FONT>        public Sprite getDeadFrog () {<a name="line.402"></a>
+<FONT color="green">403</FONT>            return deadFrog;<a name="line.403"></a>
+<FONT color="green">404</FONT>        }<a name="line.404"></a>
+<FONT color="green">405</FONT>        <a name="line.405"></a>
+<FONT color="green">406</FONT>        /**<a name="line.406"></a>
+<FONT color="green">407</FONT>         * Create the dead frog sprite<a name="line.407"></a>
+<FONT color="green">408</FONT>         */<a name="line.408"></a>
+<FONT color="green">409</FONT>        private Sprite createDeadFrog () throws Exception {<a name="line.409"></a>
+<FONT color="green">410</FONT>            if (deadFrog == null) {<a name="line.410"></a>
+<FONT color="green">411</FONT>                Image image = Image.createImage (deadFrogImageFile);<a name="line.411"></a>
+<FONT color="green">412</FONT>                deadFrog = new Sprite (image, image.getHeight (), image.getHeight ()); // yes, height<a name="line.412"></a>
+<FONT color="green">413</FONT>                deadFrog.setVisible (false);<a name="line.413"></a>
+<FONT color="green">414</FONT>            }<a name="line.414"></a>
+<FONT color="green">415</FONT>            <a name="line.415"></a>
+<FONT color="green">416</FONT>            return deadFrog;<a name="line.416"></a>
+<FONT color="green">417</FONT>        }<a name="line.417"></a>
+<FONT color="green">418</FONT>        <a name="line.418"></a>
+<FONT color="green">419</FONT>        /**<a name="line.419"></a>
+<FONT color="green">420</FONT>         * Create &amp; initialise the status layer<a name="line.420"></a>
+<FONT color="green">421</FONT>         */<a name="line.421"></a>
+<FONT color="green">422</FONT>        private StatusLayer createStatusLayer () {<a name="line.422"></a>
+<FONT color="green">423</FONT>            if (statusLayer == null) {<a name="line.423"></a>
+<FONT color="green">424</FONT>                statusLayer = new StatusLayer ();<a name="line.424"></a>
+<FONT color="green">425</FONT>                statusLayer.setX (0);<a name="line.425"></a>
+<FONT color="green">426</FONT>                statusLayer.setY ( height -  statusLayer.getHeight () );<a name="line.426"></a>
+<FONT color="green">427</FONT>                statusLayer.setWidth (width);<a name="line.427"></a>
+<FONT color="green">428</FONT>                statusLayer.setMaxTime (LEVEL_TIME);<a name="line.428"></a>
+<FONT color="green">429</FONT>            }<a name="line.429"></a>
+<FONT color="green">430</FONT>            <a name="line.430"></a>
+<FONT color="green">431</FONT>            return statusLayer;<a name="line.431"></a>
+<FONT color="green">432</FONT>        }<a name="line.432"></a>
+<FONT color="green">433</FONT>        <a name="line.433"></a>
+<FONT color="green">434</FONT>        /**<a name="line.434"></a>
+<FONT color="green">435</FONT>         * Get the game's high score<a name="line.435"></a>
+<FONT color="green">436</FONT>         */<a name="line.436"></a>
+<FONT color="green">437</FONT>        public int getHighScore () {<a name="line.437"></a>
+<FONT color="green">438</FONT>            return scoreLayer.getHighScore ();<a name="line.438"></a>
+<FONT color="green">439</FONT>        }<a name="line.439"></a>
+<FONT color="green">440</FONT>        <a name="line.440"></a>
+<FONT color="green">441</FONT>        /**<a name="line.441"></a>
+<FONT color="green">442</FONT>         * Set the game's high score<a name="line.442"></a>
+<FONT color="green">443</FONT>         */<a name="line.443"></a>
+<FONT color="green">444</FONT>        public void setHighScore (int highScore) {<a name="line.444"></a>
+<FONT color="green">445</FONT>            scoreLayer.setHighScore (highScore);<a name="line.445"></a>
+<FONT color="green">446</FONT>        }<a name="line.446"></a>
+<FONT color="green">447</FONT>        <a name="line.447"></a>
+<FONT color="green">448</FONT>        /**<a name="line.448"></a>
+<FONT color="green">449</FONT>         * Initialise the frog position ready for play. Also sets the frog to visible<a name="line.449"></a>
+<FONT color="green">450</FONT>         * and sets it to have null transform<a name="line.450"></a>
+<FONT color="green">451</FONT>         */<a name="line.451"></a>
+<FONT color="green">452</FONT>        private void initFrogPosition () {<a name="line.452"></a>
+<FONT color="green">453</FONT>            haltFrog ();<a name="line.453"></a>
+<FONT color="green">454</FONT>            frog.setPosition ( (width - frog.getWidth ()) / 2, 1 + 14*CELL_SIZE + (CELL_SIZE-frog.getWidth ())/2 );<a name="line.454"></a>
+<FONT color="green">455</FONT>            frog.setVisible (true);<a name="line.455"></a>
+<FONT color="green">456</FONT>            frog.setTransform (Sprite.TRANS_NONE);<a name="line.456"></a>
+<FONT color="green">457</FONT>            uppermostYOrdinate = frog.getY ();<a name="line.457"></a>
+<FONT color="green">458</FONT>        }<a name="line.458"></a>
+<FONT color="green">459</FONT>        <a name="line.459"></a>
+<FONT color="green">460</FONT>        /**<a name="line.460"></a>
+<FONT color="green">461</FONT>         * Get the status layer<a name="line.461"></a>
+<FONT color="green">462</FONT>         *<a name="line.462"></a>
+<FONT color="green">463</FONT>         * @return StatusLayer <a name="line.463"></a>
+<FONT color="green">464</FONT>         */<a name="line.464"></a>
+<FONT color="green">465</FONT>        public StatusLayer getStatusLayer () {<a name="line.465"></a>
+<FONT color="green">466</FONT>            return statusLayer;<a name="line.466"></a>
+<FONT color="green">467</FONT>        }<a name="line.467"></a>
+<FONT color="green">468</FONT>        <a name="line.468"></a>
+<FONT color="green">469</FONT>        /**<a name="line.469"></a>
+<FONT color="green">470</FONT>         * Create the score layer - the component used to display player score and high score<a name="line.470"></a>
+<FONT color="green">471</FONT>         *<a name="line.471"></a>
+<FONT color="green">472</FONT>         * @return ScoreLayer <a name="line.472"></a>
+<FONT color="green">473</FONT>         */<a name="line.473"></a>
+<FONT color="green">474</FONT>        private ScoreLayer createScoreLayer () {<a name="line.474"></a>
+<FONT color="green">475</FONT>            if (scoreLayer == null) {<a name="line.475"></a>
+<FONT color="green">476</FONT>                scoreLayer = new ScoreLayer ();<a name="line.476"></a>
+<FONT color="green">477</FONT>                scoreLayer.setX (0);<a name="line.477"></a>
+<FONT color="green">478</FONT>                scoreLayer.setY (0);<a name="line.478"></a>
+<FONT color="green">479</FONT>            }<a name="line.479"></a>
+<FONT color="green">480</FONT>            <a name="line.480"></a>
+<FONT color="green">481</FONT>            return scoreLayer;<a name="line.481"></a>
+<FONT color="green">482</FONT>        }<a name="line.482"></a>
+<FONT color="green">483</FONT>        <a name="line.483"></a>
+<FONT color="green">484</FONT>        /**<a name="line.484"></a>
+<FONT color="green">485</FONT>         * Get the score layer - the component used to display player score and high score<a name="line.485"></a>
+<FONT color="green">486</FONT>         *<a name="line.486"></a>
+<FONT color="green">487</FONT>         * @return ScoreLayer <a name="line.487"></a>
+<FONT color="green">488</FONT>         */<a name="line.488"></a>
+<FONT color="green">489</FONT>        public ScoreLayer getScoreLayer () {<a name="line.489"></a>
+<FONT color="green">490</FONT>            return scoreLayer;<a name="line.490"></a>
+<FONT color="green">491</FONT>        }<a name="line.491"></a>
+<FONT color="green">492</FONT>        <a name="line.492"></a>
+<FONT color="green">493</FONT>        /**<a name="line.493"></a>
+<FONT color="green">494</FONT>         * Create the home layer - the layer that the player aims to get the frog into<a name="line.494"></a>
+<FONT color="green">495</FONT>         *<a name="line.495"></a>
+<FONT color="green">496</FONT>         * @return Home<a name="line.496"></a>
+<FONT color="green">497</FONT>         */<a name="line.497"></a>
+<FONT color="green">498</FONT>        public Home createHomeLayer () {<a name="line.498"></a>
+<FONT color="green">499</FONT>            if (homeLayer == null) {<a name="line.499"></a>
+<FONT color="green">500</FONT>                homeLayer = new Home();<a name="line.500"></a>
+<FONT color="green">501</FONT>                homeLayer.setX (0);<a name="line.501"></a>
+<FONT color="green">502</FONT>                homeLayer.setY ( getScoreLayer ().getHeight () );<a name="line.502"></a>
+<FONT color="green">503</FONT>                homeLayer.setWidth (width);<a name="line.503"></a>
+<FONT color="green">504</FONT>                homeLayer.setSprite (frog);<a name="line.504"></a>
+<FONT color="green">505</FONT>                homeLayer.addListener (this);<a name="line.505"></a>
+<FONT color="green">506</FONT>            }<a name="line.506"></a>
+<FONT color="green">507</FONT>            <a name="line.507"></a>
+<FONT color="green">508</FONT>            return homeLayer;<a name="line.508"></a>
+<FONT color="green">509</FONT>        }<a name="line.509"></a>
+<FONT color="green">510</FONT>        <a name="line.510"></a>
+<FONT color="green">511</FONT>        /**<a name="line.511"></a>
+<FONT color="green">512</FONT>         * Get the home layer - the layer that the player aims to get the frog into<a name="line.512"></a>
+<FONT color="green">513</FONT>         *<a name="line.513"></a>
+<FONT color="green">514</FONT>         * @return Home<a name="line.514"></a>
+<FONT color="green">515</FONT>         */<a name="line.515"></a>
+<FONT color="green">516</FONT>        public Home getHomeLayer () {<a name="line.516"></a>
+<FONT color="green">517</FONT>            return homeLayer;<a name="line.517"></a>
+<FONT color="green">518</FONT>        }<a name="line.518"></a>
+<FONT color="green">519</FONT>        <a name="line.519"></a>
+<FONT color="green">520</FONT>        /**<a name="line.520"></a>
+<FONT color="green">521</FONT>         * Create the channels - the road and river components<a name="line.521"></a>
+<FONT color="green">522</FONT>         */<a name="line.522"></a>
+<FONT color="green">523</FONT>        private void createChannels () {<a name="line.523"></a>
+<FONT color="green">524</FONT>            for (int i=0 ; i&lt;channelIdentifiers.length ; i++) {<a name="line.524"></a>
+<FONT color="green">525</FONT>                try {<a name="line.525"></a>
+<FONT color="green">526</FONT>                    channels[ channelIdentifiers[i] ] = channelGenerator.createChannel (channelIdentifiers[i], currentLevel);<a name="line.526"></a>
+<FONT color="green">527</FONT>                    channels[ channelIdentifiers[i] ].setPosition ( (int) (-CELL_SIZE * 1.5) , channelOffsetY[ channelIdentifiers[i] ]);<a name="line.527"></a>
+<FONT color="green">528</FONT>                } catch (Exception e) {<a name="line.528"></a>
+<FONT color="green">529</FONT>                    System.err.println ("Error creating channel: " + e);<a name="line.529"></a>
+<FONT color="green">530</FONT>                }<a name="line.530"></a>
+<FONT color="green">531</FONT>            }<a name="line.531"></a>
+<FONT color="green">532</FONT>        }<a name="line.532"></a>
+<FONT color="green">533</FONT>    <a name="line.533"></a>
+<FONT color="green">534</FONT>        /**<a name="line.534"></a>
+<FONT color="green">535</FONT>         * Get a specific channel - road or river<a name="line.535"></a>
+<FONT color="green">536</FONT>         *<a name="line.536"></a>
+<FONT color="green">537</FONT>         * @int channel The channel identifier<a name="line.537"></a>
+<FONT color="green">538</FONT>         */<a name="line.538"></a>
+<FONT color="green">539</FONT>        public Channel getChannel (int channel) throws Exception {<a name="line.539"></a>
+<FONT color="green">540</FONT>            return channels[channel];<a name="line.540"></a>
+<FONT color="green">541</FONT>        }<a name="line.541"></a>
+<FONT color="green">542</FONT>        <a name="line.542"></a>
+<FONT color="green">543</FONT>        /**<a name="line.543"></a>
+<FONT color="green">544</FONT>         * Get the array containing all channels<a name="line.544"></a>
+<FONT color="green">545</FONT>         *<a name="line.545"></a>
+<FONT color="green">546</FONT>         * @return Channel[]<a name="line.546"></a>
+<FONT color="green">547</FONT>         */<a name="line.547"></a>
+<FONT color="green">548</FONT>        public Channel[] getChannels () {<a name="line.548"></a>
+<FONT color="green">549</FONT>            return channels;<a name="line.549"></a>
+<FONT color="green">550</FONT>        }<a name="line.550"></a>
+<FONT color="green">551</FONT>    <a name="line.551"></a>
+<FONT color="green">552</FONT>        /**<a name="line.552"></a>
+<FONT color="green">553</FONT>         * Create the border layers - the pavement parts of the board<a name="line.553"></a>
+<FONT color="green">554</FONT>         */<a name="line.554"></a>
+<FONT color="green">555</FONT>        private void createBorderLayers () {<a name="line.555"></a>
+<FONT color="green">556</FONT>            try {<a name="line.556"></a>
+<FONT color="green">557</FONT>                Image tilesImage = Image.createImage (tilesImageFile);<a name="line.557"></a>
+<FONT color="green">558</FONT>                <a name="line.558"></a>
+<FONT color="green">559</FONT>                borderLayers[0] = new TiledLayer (16, 1, tilesImage, CELL_SIZE, CELL_SIZE);<a name="line.559"></a>
+<FONT color="green">560</FONT>                for (int i=0 ; i&lt;NUM_CELLS_WIDE+1 ; i++) {<a name="line.560"></a>
+<FONT color="green">561</FONT>                    borderLayers[0].setCell (i, 0, borderImageTile);<a name="line.561"></a>
+<FONT color="green">562</FONT>                }<a name="line.562"></a>
+<FONT color="green">563</FONT>                borderLayers[0].setPosition ( -CELL_SIZE/2, 8*CELL_SIZE );<a name="line.563"></a>
+<FONT color="green">564</FONT>                <a name="line.564"></a>
+<FONT color="green">565</FONT>                borderLayers[1] = new TiledLayer (16, 1, tilesImage, CELL_SIZE, CELL_SIZE);<a name="line.565"></a>
+<FONT color="green">566</FONT>                for (int i=0 ; i&lt;NUM_CELLS_WIDE+1 ; i++) {<a name="line.566"></a>
+<FONT color="green">567</FONT>                    borderLayers[1].setCell (i, 0, borderImageTile);<a name="line.567"></a>
+<FONT color="green">568</FONT>                }<a name="line.568"></a>
+<FONT color="green">569</FONT>                borderLayers[1].setPosition ( -CELL_SIZE/2, 14*CELL_SIZE );<a name="line.569"></a>
+<FONT color="green">570</FONT>                <a name="line.570"></a>
+<FONT color="green">571</FONT>            } catch (Exception e) {<a name="line.571"></a>
+<FONT color="green">572</FONT>                System.out.println ("Error loading tile image: " + e);<a name="line.572"></a>
+<FONT color="green">573</FONT>            }<a name="line.573"></a>
+<FONT color="green">574</FONT>        }<a name="line.574"></a>
+<FONT color="green">575</FONT>        <a name="line.575"></a>
+<FONT color="green">576</FONT>        /**<a name="line.576"></a>
+<FONT color="green">577</FONT>         * Get the border layers - the pavement parts of the board<a name="line.577"></a>
+<FONT color="green">578</FONT>         *<a name="line.578"></a>
+<FONT color="green">579</FONT>         * @return TiledLayer[]<a name="line.579"></a>
+<FONT color="green">580</FONT>         */<a name="line.580"></a>
+<FONT color="green">581</FONT>        public TiledLayer[] getBorderLayers () {<a name="line.581"></a>
+<FONT color="green">582</FONT>            return borderLayers;<a name="line.582"></a>
+<FONT color="green">583</FONT>        }<a name="line.583"></a>
+<FONT color="green">584</FONT>        <a name="line.584"></a>
+<FONT color="green">585</FONT>        /**<a name="line.585"></a>
+<FONT color="green">586</FONT>         * Get the score of the current game<a name="line.586"></a>
+<FONT color="green">587</FONT>         *<a name="line.587"></a>
+<FONT color="green">588</FONT>         * @return int<a name="line.588"></a>
+<FONT color="green">589</FONT>         */<a name="line.589"></a>
+<FONT color="green">590</FONT>        private int getScore () {<a name="line.590"></a>
+<FONT color="green">591</FONT>            return score;<a name="line.591"></a>
+<FONT color="green">592</FONT>        }<a name="line.592"></a>
+<FONT color="green">593</FONT>        <a name="line.593"></a>
+<FONT color="green">594</FONT>        /**<a name="line.594"></a>
+<FONT color="green">595</FONT>         * Iniatalise the board for a new game<a name="line.595"></a>
+<FONT color="green">596</FONT>         */<a name="line.596"></a>
+<FONT color="green">597</FONT>        public void newGame () {<a name="line.597"></a>
+<FONT color="green">598</FONT>            score = 0;<a name="line.598"></a>
+<FONT color="green">599</FONT>            numLives = NUM_LIVES_START;<a name="line.599"></a>
+<FONT color="green">600</FONT>            homeLayer.reset ();<a name="line.600"></a>
+<FONT color="green">601</FONT>            initLevel (1);<a name="line.601"></a>
+<FONT color="green">602</FONT>            notifyListeners (BoardEvent.GAME_START);<a name="line.602"></a>
+<FONT color="green">603</FONT>        }<a name="line.603"></a>
+<FONT color="green">604</FONT>        <a name="line.604"></a>
+<FONT color="green">605</FONT>        /**<a name="line.605"></a>
+<FONT color="green">606</FONT>         * Setup the board for beginning a new level<a name="line.606"></a>
+<FONT color="green">607</FONT>         *<a name="line.607"></a>
+<FONT color="green">608</FONT>         * @param int level<a name="line.608"></a>
+<FONT color="green">609</FONT>         */<a name="line.609"></a>
+<FONT color="green">610</FONT>        public void initLevel (int level) {<a name="line.610"></a>
+<FONT color="green">611</FONT>            if (level &gt; numLevels) {<a name="line.611"></a>
+<FONT color="green">612</FONT>                notifyListeners (BoardEvent.GAME_WON);<a name="line.612"></a>
+<FONT color="green">613</FONT>                return;<a name="line.613"></a>
+<FONT color="green">614</FONT>            }<a name="line.614"></a>
+<FONT color="green">615</FONT>            <a name="line.615"></a>
+<FONT color="green">616</FONT>            currentLevel = level;<a name="line.616"></a>
+<FONT color="green">617</FONT>            initFrogPosition ();<a name="line.617"></a>
+<FONT color="green">618</FONT>            frogActive = true;<a name="line.618"></a>
+<FONT color="green">619</FONT>            deadFrog.setVisible (false);<a name="line.619"></a>
+<FONT color="green">620</FONT>            homeLayer.reset ();<a name="line.620"></a>
+<FONT color="green">621</FONT>            statusLayer.setLives (numLives);<a name="line.621"></a>
+<FONT color="green">622</FONT>            statusLayer.setTime (LEVEL_TIME);<a name="line.622"></a>
+<FONT color="green">623</FONT>            createChannels ();<a name="line.623"></a>
+<FONT color="green">624</FONT>            notifyListeners (BoardEvent.LEVEL_START);<a name="line.624"></a>
+<FONT color="green">625</FONT>        }<a name="line.625"></a>
+<FONT color="green">626</FONT>        <a name="line.626"></a>
+<FONT color="green">627</FONT>        /**<a name="line.627"></a>
+<FONT color="green">628</FONT>         * Update the board by one unit of time:<a name="line.628"></a>
+<FONT color="green">629</FONT>         *<a name="line.629"></a>
+<FONT color="green">630</FONT>         * Handle frog movement<a name="line.630"></a>
+<FONT color="green">631</FONT>         *<a name="line.631"></a>
+<FONT color="green">632</FONT>         * Update home layer, channels and status / score layers<a name="line.632"></a>
+<FONT color="green">633</FONT>         *<a name="line.633"></a>
+<FONT color="green">634</FONT>         * Check if the frog is dying<a name="line.634"></a>
+<FONT color="green">635</FONT>         *<a name="line.635"></a>
+<FONT color="green">636</FONT>         * Finish the game is the player is dead and the dead frog aninmation <a name="line.636"></a>
+<FONT color="green">637</FONT>         * is complete<a name="line.637"></a>
+<FONT color="green">638</FONT>         */<a name="line.638"></a>
+<FONT color="green">639</FONT>        public void tick () {<a name="line.639"></a>
+<FONT color="green">640</FONT>            homeLayer.tick ();<a name="line.640"></a>
+<FONT color="green">641</FONT>            <a name="line.641"></a>
+<FONT color="green">642</FONT>            updateFrogPositionUser ();<a name="line.642"></a>
+<FONT color="green">643</FONT>            updateDeadFrog ();<a name="line.643"></a>
+<FONT color="green">644</FONT>            <a name="line.644"></a>
+<FONT color="green">645</FONT>            for (int i=0 ; i&lt;channels.length ; i++) {<a name="line.645"></a>
+<FONT color="green">646</FONT>                channels[i].update ();<a name="line.646"></a>
+<FONT color="green">647</FONT>                <a name="line.647"></a>
+<FONT color="green">648</FONT>                if (channels[i].isLanding (frog)) {<a name="line.648"></a>
+<FONT color="green">649</FONT>                    if ( channels[i].cellType ( channels[i].landingCell (frog) ) == Channel.TYPE_MOVING ) {<a name="line.649"></a>
+<FONT color="green">650</FONT>                        frog.move ( channels[i].getVelocity (), 0 );<a name="line.650"></a>
+<FONT color="green">651</FONT>                    }<a name="line.651"></a>
+<FONT color="green">652</FONT>                }<a name="line.652"></a>
+<FONT color="green">653</FONT>                <a name="line.653"></a>
+<FONT color="green">654</FONT>                if (channels[i].isColliding (frog)) {<a name="line.654"></a>
+<FONT color="green">655</FONT>                    if ( channels[i].isDeadlyCollision (frog) ) {<a name="line.655"></a>
+<FONT color="green">656</FONT>                        System.out.println ( "Channel Frog Death" );<a name="line.656"></a>
+<FONT color="green">657</FONT>                        frogDeath ();<a name="line.657"></a>
+<FONT color="green">658</FONT>                    }<a name="line.658"></a>
+<FONT color="green">659</FONT>                }<a name="line.659"></a>
+<FONT color="green">660</FONT>            }<a name="line.660"></a>
+<FONT color="green">661</FONT>            <a name="line.661"></a>
+<FONT color="green">662</FONT>            if (frogActive &amp;&amp; (frog.getX () &lt; 0 || frog.getX () + frog.getWidth () &gt; getWidth () ) ) {<a name="line.662"></a>
+<FONT color="green">663</FONT>                frogDeath ();<a name="line.663"></a>
+<FONT color="green">664</FONT>            }<a name="line.664"></a>
+<FONT color="green">665</FONT>            <a name="line.665"></a>
+<FONT color="green">666</FONT>            if ( statusLayer.getTime () == 0 ) {<a name="line.666"></a>
+<FONT color="green">667</FONT>                frogDeath ();<a name="line.667"></a>
+<FONT color="green">668</FONT>            }<a name="line.668"></a>
+<FONT color="green">669</FONT>            <a name="line.669"></a>
+<FONT color="green">670</FONT>            if (frogActive) {   // don't increment timer when frog inactive<a name="line.670"></a>
+<FONT color="green">671</FONT>                statusLayer.tick ();<a name="line.671"></a>
+<FONT color="green">672</FONT>            }<a name="line.672"></a>
+<FONT color="green">673</FONT>            <a name="line.673"></a>
+<FONT color="green">674</FONT>            // check if game is over<a name="line.674"></a>
+<FONT color="green">675</FONT>            <a name="line.675"></a>
+<FONT color="green">676</FONT>            if (numLives == 0 &amp;&amp; deadFrogTimer &gt; deadFrogLonjevity) {<a name="line.676"></a>
+<FONT color="green">677</FONT>                finishGame ();<a name="line.677"></a>
+<FONT color="green">678</FONT>            }<a name="line.678"></a>
+<FONT color="green">679</FONT>        }<a name="line.679"></a>
+<FONT color="green">680</FONT>        <a name="line.680"></a>
+<FONT color="green">681</FONT>        /**<a name="line.681"></a>
+<FONT color="green">682</FONT>         * Handle loosing a life<a name="line.682"></a>
+<FONT color="green">683</FONT>         *<a name="line.683"></a>
+<FONT color="green">684</FONT>         * Hide the frog, repoisition him at the foot of the screen, deactivate him<a name="line.684"></a>
+<FONT color="green">685</FONT>         * and mark the dead frog sprite as active<a name="line.685"></a>
+<FONT color="green">686</FONT>         */<a name="line.686"></a>
+<FONT color="green">687</FONT>        public void frogDeath () {<a name="line.687"></a>
+<FONT color="green">688</FONT>            startDeadFrog();<a name="line.688"></a>
+<FONT color="green">689</FONT>            initFrogPosition();<a name="line.689"></a>
+<FONT color="green">690</FONT>            looseLife();<a name="line.690"></a>
+<FONT color="green">691</FONT>            frog.setVisible (false);<a name="line.691"></a>
+<FONT color="green">692</FONT>            deadFrogActive = true;<a name="line.692"></a>
+<FONT color="green">693</FONT>            frogActive = false;<a name="line.693"></a>
+<FONT color="green">694</FONT>        }<a name="line.694"></a>
+<FONT color="green">695</FONT>        <a name="line.695"></a>
+<FONT color="green">696</FONT>        /**<a name="line.696"></a>
+<FONT color="green">697</FONT>         * <a name="line.697"></a>
+<FONT color="green">698</FONT>         */<a name="line.698"></a>
+<FONT color="green">699</FONT>        private void updateDeadFrog () {<a name="line.699"></a>
+<FONT color="green">700</FONT>            if (deadFrogActive) {<a name="line.700"></a>
+<FONT color="green">701</FONT>                double frameRatio = deadFrogLonjevity / deadFrog.getFrameSequenceLength ();<a name="line.701"></a>
+<FONT color="green">702</FONT>                <a name="line.702"></a>
+<FONT color="green">703</FONT>                int frame = (int) Math.floor ( deadFrogTimer / frameRatio );<a name="line.703"></a>
+<FONT color="green">704</FONT>                frame = Math.min ( deadFrog.getFrameSequenceLength ()-1, frame );<a name="line.704"></a>
+<FONT color="green">705</FONT>                <a name="line.705"></a>
+<FONT color="green">706</FONT>                if ( deadFrogTimer &gt;= deadFrogLonjevity ) {<a name="line.706"></a>
+<FONT color="green">707</FONT>                    deadFrogActive = false;<a name="line.707"></a>
+<FONT color="green">708</FONT>                    deadFrog.setVisible (false);<a name="line.708"></a>
+<FONT color="green">709</FONT>                    frog.setVisible (true);<a name="line.709"></a>
+<FONT color="green">710</FONT>                    frogActive = true;<a name="line.710"></a>
+<FONT color="green">711</FONT>                } else {<a name="line.711"></a>
+<FONT color="green">712</FONT>                    deadFrog.setFrame (frame);<a name="line.712"></a>
+<FONT color="green">713</FONT>                }<a name="line.713"></a>
+<FONT color="green">714</FONT>                <a name="line.714"></a>
+<FONT color="green">715</FONT>                deadFrogTimer++;<a name="line.715"></a>
+<FONT color="green">716</FONT>            }<a name="line.716"></a>
+<FONT color="green">717</FONT>        }<a name="line.717"></a>
+<FONT color="green">718</FONT>        <a name="line.718"></a>
+<FONT color="green">719</FONT>        private void startDeadFrog () {<a name="line.719"></a>
+<FONT color="green">720</FONT>            int offsetX = (deadFrog.getWidth () - frog.getWidth ()) / 2; // offset from the frog position, not origin<a name="line.720"></a>
+<FONT color="green">721</FONT>            int offsetY = (deadFrog.getHeight () - frog.getHeight ()) / 2; // offset from the frog position, not origin<a name="line.721"></a>
+<FONT color="green">722</FONT>            <a name="line.722"></a>
+<FONT color="green">723</FONT>            deadFrog.setPosition ( frog.getX () - offsetX, frog.getY () - offsetY );<a name="line.723"></a>
+<FONT color="green">724</FONT>            deadFrog.setVisible (true);<a name="line.724"></a>
+<FONT color="green">725</FONT>            deadFrogActive = true;<a name="line.725"></a>
+<FONT color="green">726</FONT>            deadFrogTimer = 0;<a name="line.726"></a>
+<FONT color="green">727</FONT>        }<a name="line.727"></a>
+<FONT color="green">728</FONT>        <a name="line.728"></a>
+<FONT color="green">729</FONT>        public void looseLife () {<a name="line.729"></a>
+<FONT color="green">730</FONT>            numLives--;<a name="line.730"></a>
+<FONT color="green">731</FONT>            statusLayer.setLives (numLives);<a name="line.731"></a>
+<FONT color="green">732</FONT>            notifyListeners (BoardEvent.FROG_DEATH);<a name="line.732"></a>
+<FONT color="green">733</FONT>            <a name="line.733"></a>
+<FONT color="green">734</FONT>            if (numLives &gt; 0) {<a name="line.734"></a>
+<FONT color="green">735</FONT>                resetTime ();<a name="line.735"></a>
+<FONT color="green">736</FONT>            }<a name="line.736"></a>
+<FONT color="green">737</FONT>        }<a name="line.737"></a>
+<FONT color="green">738</FONT>        <a name="line.738"></a>
+<FONT color="green">739</FONT>        private void finishGame () {<a name="line.739"></a>
+<FONT color="green">740</FONT>            notifyListeners (BoardEvent.GAME_LOST);<a name="line.740"></a>
+<FONT color="green">741</FONT>        }<a name="line.741"></a>
+<FONT color="green">742</FONT>        <a name="line.742"></a>
+<FONT color="green">743</FONT>        private void resetTime () {<a name="line.743"></a>
+<FONT color="green">744</FONT>            statusLayer.setTime (LEVEL_TIME);<a name="line.744"></a>
+<FONT color="green">745</FONT>        }<a name="line.745"></a>
+<FONT color="green">746</FONT>        <a name="line.746"></a>
+<FONT color="green">747</FONT>        /**<a name="line.747"></a>
+<FONT color="green">748</FONT>         * Stop the frog from moving<a name="line.748"></a>
+<FONT color="green">749</FONT>         */<a name="line.749"></a>
+<FONT color="green">750</FONT>        private void haltFrog () {<a name="line.750"></a>
+<FONT color="green">751</FONT>            frogMoveCounter = 0;<a name="line.751"></a>
+<FONT color="green">752</FONT>            frogMovement = FROG_NULL;<a name="line.752"></a>
+<FONT color="green">753</FONT>        }<a name="line.753"></a>
+<FONT color="green">754</FONT>        <a name="line.754"></a>
+<FONT color="green">755</FONT>        /**<a name="line.755"></a>
+<FONT color="green">756</FONT>         * Move the frog<a name="line.756"></a>
+<FONT color="green">757</FONT>         *<a name="line.757"></a>
+<FONT color="green">758</FONT>         * @param int dx<a name="line.758"></a>
+<FONT color="green">759</FONT>         * @param int dy<a name="line.759"></a>
+<FONT color="green">760</FONT>         */<a name="line.760"></a>
+<FONT color="green">761</FONT>        public void moveFrog (int dx, int dy) {<a name="line.761"></a>
+<FONT color="green">762</FONT>            notifyListeners (BoardEvent.FROG_MOVE);<a name="line.762"></a>
+<FONT color="green">763</FONT>            frog.move (dx, dy);<a name="line.763"></a>
+<FONT color="green">764</FONT>        }<a name="line.764"></a>
+<FONT color="green">765</FONT>        <a name="line.765"></a>
+<FONT color="green">766</FONT>        /**<a name="line.766"></a>
+<FONT color="green">767</FONT>         * Set the direction the frog is moving in<a name="line.767"></a>
+<FONT color="green">768</FONT>         *<a name="line.768"></a>
+<FONT color="green">769</FONT>         * USERINPUT_LEFT, USERINPUT_RIGHT, USERINPUT_UP, USERINPUT_DOWN<a name="line.769"></a>
+<FONT color="green">770</FONT>         *<a name="line.770"></a>
+<FONT color="green">771</FONT>         * @param int frogMovement<a name="line.771"></a>
+<FONT color="green">772</FONT>         */<a name="line.772"></a>
+<FONT color="green">773</FONT>        public void setFrogMovement (int frogMovement) {<a name="line.773"></a>
+<FONT color="green">774</FONT>            this.frogMovement = frogMovement;<a name="line.774"></a>
+<FONT color="green">775</FONT>        }<a name="line.775"></a>
+<FONT color="green">776</FONT>        <a name="line.776"></a>
+<FONT color="green">777</FONT>        /**<a name="line.777"></a>
+<FONT color="green">778</FONT>         * Get the direction that the frog is moving <a name="line.778"></a>
+<FONT color="green">779</FONT>         *<a name="line.779"></a>
+<FONT color="green">780</FONT>         * @return int<a name="line.780"></a>
+<FONT color="green">781</FONT>         */<a name="line.781"></a>
+<FONT color="green">782</FONT>        public int getFrogMovement () {<a name="line.782"></a>
+<FONT color="green">783</FONT>            return frogMovement;<a name="line.783"></a>
+<FONT color="green">784</FONT>        }<a name="line.784"></a>
+<FONT color="green">785</FONT>        <a name="line.785"></a>
+<FONT color="green">786</FONT>        /**<a name="line.786"></a>
+<FONT color="green">787</FONT>         * Check if the frog is moving<a name="line.787"></a>
+<FONT color="green">788</FONT>         *<a name="line.788"></a>
+<FONT color="green">789</FONT>         * @return boolean<a name="line.789"></a>
+<FONT color="green">790</FONT>         */<a name="line.790"></a>
+<FONT color="green">791</FONT>        public boolean isFrogMoving () {<a name="line.791"></a>
+<FONT color="green">792</FONT>            return frogMovement != FROG_NULL;<a name="line.792"></a>
+<FONT color="green">793</FONT>        }<a name="line.793"></a>
+<FONT color="green">794</FONT>        <a name="line.794"></a>
+<FONT color="green">795</FONT>        /**<a name="line.795"></a>
+<FONT color="green">796</FONT>         * Add a value to the frog's movement<a name="line.796"></a>
+<FONT color="green">797</FONT>         * <a name="line.797"></a>
+<FONT color="green">798</FONT>         * This is used when moving the frog after the user has started<a name="line.798"></a>
+<FONT color="green">799</FONT>         * the frog moving<a name="line.799"></a>
+<FONT color="green">800</FONT>         *<a name="line.800"></a>
+<FONT color="green">801</FONT>         * @param int<a name="line.801"></a>
+<FONT color="green">802</FONT>         */<a name="line.802"></a>
+<FONT color="green">803</FONT>        public void addFrogMoveCounter (int add) {<a name="line.803"></a>
+<FONT color="green">804</FONT>            frogMoveCounter += add;<a name="line.804"></a>
+<FONT color="green">805</FONT>        }<a name="line.805"></a>
+<FONT color="green">806</FONT>        <a name="line.806"></a>
+<FONT color="green">807</FONT>        /**<a name="line.807"></a>
+<FONT color="green">808</FONT>         * Get how far the frog has moved in the current move<a name="line.808"></a>
+<FONT color="green">809</FONT>         * <a name="line.809"></a>
+<FONT color="green">810</FONT>         * @return int<a name="line.810"></a>
+<FONT color="green">811</FONT>         */<a name="line.811"></a>
+<FONT color="green">812</FONT>        public int getFrogMoveCounter () {<a name="line.812"></a>
+<FONT color="green">813</FONT>            return frogMoveCounter;<a name="line.813"></a>
+<FONT color="green">814</FONT>        }<a name="line.814"></a>
+<FONT color="green">815</FONT>        <a name="line.815"></a>
+<FONT color="green">816</FONT>        /**<a name="line.816"></a>
+<FONT color="green">817</FONT>         * Set how far the frog has moved in the current move<a name="line.817"></a>
+<FONT color="green">818</FONT>         * <a name="line.818"></a>
+<FONT color="green">819</FONT>         * @return int<a name="line.819"></a>
+<FONT color="green">820</FONT>         */<a name="line.820"></a>
+<FONT color="green">821</FONT>        public void setFrogMoveCounter (int frogMoveCounter) {<a name="line.821"></a>
+<FONT color="green">822</FONT>            this.frogMoveCounter = frogMoveCounter;<a name="line.822"></a>
+<FONT color="green">823</FONT>        }<a name="line.823"></a>
+<FONT color="green">824</FONT>        <a name="line.824"></a>
+<FONT color="green">825</FONT>        /**<a name="line.825"></a>
+<FONT color="green">826</FONT>         * Rotate the frog - used when moving left or right to make the frog<a name="line.826"></a>
+<FONT color="green">827</FONT>         * face the right direction<a name="line.827"></a>
+<FONT color="green">828</FONT>         *<a name="line.828"></a>
+<FONT color="green">829</FONT>         * @param int rotation<a name="line.829"></a>
+<FONT color="green">830</FONT>         */<a name="line.830"></a>
+<FONT color="green">831</FONT>        public void rotateFrog (int rotation) {<a name="line.831"></a>
+<FONT color="green">832</FONT>            frog.setTransform ( rotation );<a name="line.832"></a>
+<FONT color="green">833</FONT>        }<a name="line.833"></a>
+<FONT color="green">834</FONT>        <a name="line.834"></a>
+<FONT color="green">835</FONT>        /**<a name="line.835"></a>
+<FONT color="green">836</FONT>         * Add points to the current score<a name="line.836"></a>
+<FONT color="green">837</FONT>         *<a name="line.837"></a>
+<FONT color="green">838</FONT>         * @param int add<a name="line.838"></a>
+<FONT color="green">839</FONT>         */<a name="line.839"></a>
+<FONT color="green">840</FONT>        private void addScore (int add) {<a name="line.840"></a>
+<FONT color="green">841</FONT>            score += add;<a name="line.841"></a>
+<FONT color="green">842</FONT>            scoreLayer.setScore (score);<a name="line.842"></a>
+<FONT color="green">843</FONT>            if ( score &gt; scoreLayer.getHighScore () ) {<a name="line.843"></a>
+<FONT color="green">844</FONT>                scoreLayer.setHighScore (score);<a name="line.844"></a>
+<FONT color="green">845</FONT>            }<a name="line.845"></a>
+<FONT color="green">846</FONT>        }<a name="line.846"></a>
+<FONT color="green">847</FONT>        <a name="line.847"></a>
+<FONT color="green">848</FONT>        /**<a name="line.848"></a>
+<FONT color="green">849</FONT>         * @param int event<a name="line.849"></a>
+<FONT color="green">850</FONT>         * @param Home home<a name="line.850"></a>
+<FONT color="green">851</FONT>         */<a name="line.851"></a>
+<FONT color="green">852</FONT>        public void homeEvent (int event, Home home) {<a name="line.852"></a>
+<FONT color="green">853</FONT>            switch (event) {<a name="line.853"></a>
+<FONT color="green">854</FONT>                case HomeEvent.FROG_DEATH:<a name="line.854"></a>
+<FONT color="green">855</FONT>                    if (frogActive) {<a name="line.855"></a>
+<FONT color="green">856</FONT>                        frogDeath ();<a name="line.856"></a>
+<FONT color="green">857</FONT>                    }<a name="line.857"></a>
+<FONT color="green">858</FONT>                    break;<a name="line.858"></a>
+<FONT color="green">859</FONT>                    <a name="line.859"></a>
+<FONT color="green">860</FONT>                case HomeEvent.FROG_HOME:<a name="line.860"></a>
+<FONT color="green">861</FONT>                    initFrogPosition ();<a name="line.861"></a>
+<FONT color="green">862</FONT>                    resetTime ();<a name="line.862"></a>
+<FONT color="green">863</FONT>                    notifyListeners (BoardEvent.FROG_HOME);<a name="line.863"></a>
+<FONT color="green">864</FONT>                    <a name="line.864"></a>
+<FONT color="green">865</FONT>                    addScore (POINTS_FROG_HOME);<a name="line.865"></a>
+<FONT color="green">866</FONT>                    <a name="line.866"></a>
+<FONT color="green">867</FONT>                    if ( home.isComplete () ) {<a name="line.867"></a>
+<FONT color="green">868</FONT>                        addScore (POINTS_LEVEL);<a name="line.868"></a>
+<FONT color="green">869</FONT>                        notifyListeners (BoardEvent.LEVEL_COMPLETE);<a name="line.869"></a>
+<FONT color="green">870</FONT>                        initLevel ( currentLevel+1 );<a name="line.870"></a>
+<FONT color="green">871</FONT>                    }<a name="line.871"></a>
+<FONT color="green">872</FONT>                    break;<a name="line.872"></a>
+<FONT color="green">873</FONT>                    <a name="line.873"></a>
+<FONT color="green">874</FONT>                case HomeEvent.INSECT_EATEN:<a name="line.874"></a>
+<FONT color="green">875</FONT>                    addScore (POINTS_EAT_INSECT);<a name="line.875"></a>
+<FONT color="green">876</FONT>                    break;<a name="line.876"></a>
+<FONT color="green">877</FONT>            }<a name="line.877"></a>
+<FONT color="green">878</FONT>        }<a name="line.878"></a>
+<FONT color="green">879</FONT>        <a name="line.879"></a>
+<FONT color="green">880</FONT>        /**<a name="line.880"></a>
+<FONT color="green">881</FONT>         * Remove a listener. The listener will no longer be notified of Board events<a name="line.881"></a>
+<FONT color="green">882</FONT>         *<a name="line.882"></a>
+<FONT color="green">883</FONT>         * @param BoardListener listener<a name="line.883"></a>
+<FONT color="green">884</FONT>         */<a name="line.884"></a>
+<FONT color="green">885</FONT>        public void removeListener (BoardListener listener) {<a name="line.885"></a>
+<FONT color="green">886</FONT>            listeners.removeElement (listener);<a name="line.886"></a>
+<FONT color="green">887</FONT>        }<a name="line.887"></a>
+<FONT color="green">888</FONT>        <a name="line.888"></a>
+<FONT color="green">889</FONT>        /**<a name="line.889"></a>
+<FONT color="green">890</FONT>         * Add a listener. The listener will be notified of Board events<a name="line.890"></a>
+<FONT color="green">891</FONT>         *<a name="line.891"></a>
+<FONT color="green">892</FONT>         * @param BoardListener listener<a name="line.892"></a>
+<FONT color="green">893</FONT>         */<a name="line.893"></a>
+<FONT color="green">894</FONT>        public void addListener (BoardListener listener) {<a name="line.894"></a>
+<FONT color="green">895</FONT>            listeners.addElement (listener);<a name="line.895"></a>
+<FONT color="green">896</FONT>        }<a name="line.896"></a>
+<FONT color="green">897</FONT>        <a name="line.897"></a>
+<FONT color="green">898</FONT>        /**<a name="line.898"></a>
+<FONT color="green">899</FONT>         * Notify listeners of an event<a name="line.899"></a>
+<FONT color="green">900</FONT>         *<a name="line.900"></a>
+<FONT color="green">901</FONT>         * @param int event<a name="line.901"></a>
+<FONT color="green">902</FONT>         */<a name="line.902"></a>
+<FONT color="green">903</FONT>        private void notifyListeners (int event) {<a name="line.903"></a>
+<FONT color="green">904</FONT>            Enumeration enumeration = listeners.elements ();<a name="line.904"></a>
+<FONT color="green">905</FONT>            while (enumeration.hasMoreElements ()) {<a name="line.905"></a>
+<FONT color="green">906</FONT>                BoardListener listener = (BoardListener) enumeration.nextElement ();<a name="line.906"></a>
+<FONT color="green">907</FONT>                listener.boardEvent (event, this);<a name="line.907"></a>
+<FONT color="green">908</FONT>            }<a name="line.908"></a>
+<FONT color="green">909</FONT>        }<a name="line.909"></a>
+<FONT color="green">910</FONT>        <a name="line.910"></a>
+<FONT color="green">911</FONT>        /**<a name="line.911"></a>
+<FONT color="green">912</FONT>         * Process user input<a name="line.912"></a>
+<FONT color="green">913</FONT>         *<a name="line.913"></a>
+<FONT color="green">914</FONT>         * @param int inputType<a name="line.914"></a>
+<FONT color="green">915</FONT>         */<a name="line.915"></a>
+<FONT color="green">916</FONT>        public void userInput (int inputType) {<a name="line.916"></a>
+<FONT color="green">917</FONT>            if (getFrog () != null &amp;&amp; frogActive) {<a name="line.917"></a>
+<FONT color="green">918</FONT>                switch(inputType) {<a name="line.918"></a>
+<FONT color="green">919</FONT>                    case USERINPUT_LEFT:<a name="line.919"></a>
+<FONT color="green">920</FONT>                        if (! isFrogMoving ()) {<a name="line.920"></a>
+<FONT color="green">921</FONT>                            frog.setTransform (Sprite.TRANS_ROT270);<a name="line.921"></a>
+<FONT color="green">922</FONT>                            setFrogMovement (FROG_LEFT);<a name="line.922"></a>
+<FONT color="green">923</FONT>                        }<a name="line.923"></a>
+<FONT color="green">924</FONT>                        break;<a name="line.924"></a>
+<FONT color="green">925</FONT>                        <a name="line.925"></a>
+<FONT color="green">926</FONT>                    case USERINPUT_RIGHT:<a name="line.926"></a>
+<FONT color="green">927</FONT>                        if (! isFrogMoving ()) {<a name="line.927"></a>
+<FONT color="green">928</FONT>                            frog.setTransform (Sprite.TRANS_ROT90);<a name="line.928"></a>
+<FONT color="green">929</FONT>                            setFrogMovement (FROG_RIGHT);<a name="line.929"></a>
+<FONT color="green">930</FONT>                        }<a name="line.930"></a>
+<FONT color="green">931</FONT>                        break;<a name="line.931"></a>
+<FONT color="green">932</FONT>                        <a name="line.932"></a>
+<FONT color="green">933</FONT>                    case USERINPUT_UP:<a name="line.933"></a>
+<FONT color="green">934</FONT>                        if (! isFrogMoving ()) {<a name="line.934"></a>
+<FONT color="green">935</FONT>                            frog.setTransform (Sprite.TRANS_NONE);<a name="line.935"></a>
+<FONT color="green">936</FONT>                            setFrogMovement (FROG_UP);<a name="line.936"></a>
+<FONT color="green">937</FONT>                        }<a name="line.937"></a>
+<FONT color="green">938</FONT>                        break;<a name="line.938"></a>
+<FONT color="green">939</FONT>                        <a name="line.939"></a>
+<FONT color="green">940</FONT>                    case USERINPUT_DOWN:<a name="line.940"></a>
+<FONT color="green">941</FONT>                        if (! isFrogMoving ()) {<a name="line.941"></a>
+<FONT color="green">942</FONT>                            if ( frog.getY () + 1 &lt; 14*CELL_SIZE + (CELL_SIZE-frog.getWidth ())/2 ) {<a name="line.942"></a>
+<FONT color="green">943</FONT>                                frog.setTransform (Sprite.TRANS_ROT180);<a name="line.943"></a>
+<FONT color="green">944</FONT>                                setFrogMovement (FROG_DOWN);<a name="line.944"></a>
+<FONT color="green">945</FONT>                            }<a name="line.945"></a>
+<FONT color="green">946</FONT>                        }<a name="line.946"></a>
+<FONT color="green">947</FONT>                        break;<a name="line.947"></a>
+<FONT color="green">948</FONT>                }<a name="line.948"></a>
+<FONT color="green">949</FONT>            }<a name="line.949"></a>
+<FONT color="green">950</FONT>        }<a name="line.950"></a>
+<FONT color="green">951</FONT>        <a name="line.951"></a>
+<FONT color="green">952</FONT>        <a name="line.952"></a>
+<FONT color="green">953</FONT>        /**<a name="line.953"></a>
+<FONT color="green">954</FONT>         * update the position of the frog if the user is moving it<a name="line.954"></a>
+<FONT color="green">955</FONT>         */<a name="line.955"></a>
+<FONT color="green">956</FONT>        private void updateFrogPositionUser () {<a name="line.956"></a>
+<FONT color="green">957</FONT>            if ( isFrogMoving () ) {<a name="line.957"></a>
+<FONT color="green">958</FONT>                <a name="line.958"></a>
+<FONT color="green">959</FONT>                int horizontalIncrement = 0;<a name="line.959"></a>
+<FONT color="green">960</FONT>                int verticalIncrement   = 0;<a name="line.960"></a>
+<FONT color="green">961</FONT>                int potentialIncrement  = 0;<a name="line.961"></a>
+<FONT color="green">962</FONT>                int dx = 0;<a name="line.962"></a>
+<FONT color="green">963</FONT>                int dy = 0;<a name="line.963"></a>
+<FONT color="green">964</FONT>                <a name="line.964"></a>
+<FONT color="green">965</FONT>                switch (getFrogMovement ()) {<a name="line.965"></a>
+<FONT color="green">966</FONT>                    case BoardModel.FROG_UP:<a name="line.966"></a>
+<FONT color="green">967</FONT>                        <a name="line.967"></a>
+<FONT color="green">968</FONT>                        verticalIncrement = BoardModel.FROG_VERTICAL_INCREMENT;<a name="line.968"></a>
+<FONT color="green">969</FONT>                        potentialIncrement = getFrogMoveCounter () + verticalIncrement;<a name="line.969"></a>
+<FONT color="green">970</FONT>                        if ( potentialIncrement &gt;= BoardModel.FROG_VERTICAL_TOTAL) {<a name="line.970"></a>
+<FONT color="green">971</FONT>                            verticalIncrement = BoardModel.FROG_VERTICAL_TOTAL - getFrogMoveCounter ();<a name="line.971"></a>
+<FONT color="green">972</FONT>                        }<a name="line.972"></a>
+<FONT color="green">973</FONT>                        <a name="line.973"></a>
+<FONT color="green">974</FONT>                        moveFrog (0, -verticalIncrement);<a name="line.974"></a>
+<FONT color="green">975</FONT>                        addFrogMoveCounter (verticalIncrement);<a name="line.975"></a>
+<FONT color="green">976</FONT>                        <a name="line.976"></a>
+<FONT color="green">977</FONT>                        break;<a name="line.977"></a>
+<FONT color="green">978</FONT>                        <a name="line.978"></a>
+<FONT color="green">979</FONT>                    case BoardModel.FROG_DOWN:<a name="line.979"></a>
+<FONT color="green">980</FONT>                        <a name="line.980"></a>
+<FONT color="green">981</FONT>                        verticalIncrement = BoardModel.FROG_VERTICAL_INCREMENT;<a name="line.981"></a>
+<FONT color="green">982</FONT>                        potentialIncrement = getFrogMoveCounter () + verticalIncrement;<a name="line.982"></a>
+<FONT color="green">983</FONT>                        if ( potentialIncrement &gt;= BoardModel.FROG_VERTICAL_TOTAL) {<a name="line.983"></a>
+<FONT color="green">984</FONT>                            verticalIncrement = BoardModel.FROG_VERTICAL_TOTAL - getFrogMoveCounter ();<a name="line.984"></a>
+<FONT color="green">985</FONT>                        }<a name="line.985"></a>
+<FONT color="green">986</FONT>                        <a name="line.986"></a>
+<FONT color="green">987</FONT>                        moveFrog (0, verticalIncrement);<a name="line.987"></a>
+<FONT color="green">988</FONT>                        addFrogMoveCounter (verticalIncrement);<a name="line.988"></a>
+<FONT color="green">989</FONT>                        <a name="line.989"></a>
+<FONT color="green">990</FONT>                        break;<a name="line.990"></a>
+<FONT color="green">991</FONT>                        <a name="line.991"></a>
+<FONT color="green">992</FONT>                    case BoardModel.FROG_LEFT:<a name="line.992"></a>
+<FONT color="green">993</FONT>                        <a name="line.993"></a>
+<FONT color="green">994</FONT>                        horizontalIncrement = BoardModel.FROG_HORIZONTAL_INCREMENT;<a name="line.994"></a>
+<FONT color="green">995</FONT>                        potentialIncrement = getFrogMoveCounter () + horizontalIncrement;<a name="line.995"></a>
+<FONT color="green">996</FONT>                        if ( potentialIncrement &gt;= BoardModel.FROG_HORIZONTAL_TOTAL) {<a name="line.996"></a>
+<FONT color="green">997</FONT>                            horizontalIncrement = BoardModel.FROG_HORIZONTAL_TOTAL - getFrogMoveCounter ();<a name="line.997"></a>
+<FONT color="green">998</FONT>                        }<a name="line.998"></a>
+<FONT color="green">999</FONT>                        <a name="line.999"></a>
+<FONT color="green">1000</FONT>                        moveFrog (-horizontalIncrement, 0);<a name="line.1000"></a>
+<FONT color="green">1001</FONT>                        addFrogMoveCounter (horizontalIncrement);<a name="line.1001"></a>
+<FONT color="green">1002</FONT>                        <a name="line.1002"></a>
+<FONT color="green">1003</FONT>                        break;<a name="line.1003"></a>
+<FONT color="green">1004</FONT>                        <a name="line.1004"></a>
+<FONT color="green">1005</FONT>                    case BoardModel.FROG_RIGHT:<a name="line.1005"></a>
+<FONT color="green">1006</FONT>                        <a name="line.1006"></a>
+<FONT color="green">1007</FONT>                        horizontalIncrement = BoardModel.FROG_HORIZONTAL_INCREMENT;<a name="line.1007"></a>
+<FONT color="green">1008</FONT>                        potentialIncrement = getFrogMoveCounter () + horizontalIncrement;<a name="line.1008"></a>
+<FONT color="green">1009</FONT>                        if ( potentialIncrement &gt;= BoardModel.FROG_HORIZONTAL_TOTAL) {<a name="line.1009"></a>
+<FONT color="green">1010</FONT>                            horizontalIncrement = BoardModel.FROG_HORIZONTAL_TOTAL - getFrogMoveCounter ();<a name="line.1010"></a>
+<FONT color="green">1011</FONT>                        }<a name="line.1011"></a>
+<FONT color="green">1012</FONT>                        <a name="line.1012"></a>
+<FONT color="green">1013</FONT>                        moveFrog (horizontalIncrement, 0);<a name="line.1013"></a>
+<FONT color="green">1014</FONT>                        addFrogMoveCounter (horizontalIncrement);<a name="line.1014"></a>
+<FONT color="green">1015</FONT>                        <a name="line.1015"></a>
+<FONT color="green">1016</FONT>                        break;<a name="line.1016"></a>
+<FONT color="green">1017</FONT>                }<a name="line.1017"></a>
+<FONT color="green">1018</FONT>                <a name="line.1018"></a>
+<FONT color="green">1019</FONT>                if (verticalIncrement &lt;= 0 &amp;&amp; horizontalIncrement &lt;= 0) {<a name="line.1019"></a>
+<FONT color="green">1020</FONT>                    if ( getFrogMovement () == BoardModel.FROG_UP &amp;&amp; frog.getY () &lt; uppermostYOrdinate ) {<a name="line.1020"></a>
+<FONT color="green">1021</FONT>                        uppermostYOrdinate = frog.getY ();<a name="line.1021"></a>
+<FONT color="green">1022</FONT>                        addScore (POINTS_JUMP);<a name="line.1022"></a>
+<FONT color="green">1023</FONT>                    }<a name="line.1023"></a>
+<FONT color="green">1024</FONT>                    setFrogMoveCounter (0);<a name="line.1024"></a>
+<FONT color="green">1025</FONT>                    setFrogMovement (BoardModel.FROG_NULL);<a name="line.1025"></a>
+<FONT color="green">1026</FONT>                }<a name="line.1026"></a>
+<FONT color="green">1027</FONT>            }<a name="line.1027"></a>
+<FONT color="green">1028</FONT>        }<a name="line.1028"></a>
+<FONT color="green">1029</FONT>        <a name="line.1029"></a>
+<FONT color="green">1030</FONT>        //public void paint(Graphics g) {<a name="line.1030"></a>
+<FONT color="green">1031</FONT>        <a name="line.1031"></a>
+<FONT color="green">1032</FONT>        //}<a name="line.1032"></a>
+<FONT color="green">1033</FONT>        <a name="line.1033"></a>
+<FONT color="green">1034</FONT>    }<a name="line.1034"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

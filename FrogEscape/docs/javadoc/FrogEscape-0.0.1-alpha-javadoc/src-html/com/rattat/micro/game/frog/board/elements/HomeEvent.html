@@ -1,0 +1,125 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /**<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Copyright 2006 William Robertson (www.rattat.com)<a name="line.2"></a>
+<FONT color="green">003</FONT>     */<a name="line.3"></a>
+<FONT color="green">004</FONT>    <a name="line.4"></a>
+<FONT color="green">005</FONT>    package com.rattat.micro.game.frog.board.elements;<a name="line.5"></a>
+<FONT color="green">006</FONT>    <a name="line.6"></a>
+<FONT color="green">007</FONT>    /**<a name="line.7"></a>
+<FONT color="green">008</FONT>     * Very simple class - just holds public static final ints that <a name="line.8"></a>
+<FONT color="green">009</FONT>     * are used to notify BoardListeners of events. In most Observer pattern<a name="line.9"></a>
+<FONT color="green">010</FONT>     * implementations an instance of the Event class would be passed around<a name="line.10"></a>
+<FONT color="green">011</FONT>     * not notify of events, but creating all these objects is not a great thing in <a name="line.11"></a>
+<FONT color="green">012</FONT>     * MIDP. Passing around ints insatead is plenty effective. <a name="line.12"></a>
+<FONT color="green">013</FONT>     *<a name="line.13"></a>
+<FONT color="green">014</FONT>     * @author william@rattat.com<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    public class HomeEvent {<a name="line.16"></a>
+<FONT color="green">017</FONT>        <a name="line.17"></a>
+<FONT color="green">018</FONT>        /**<a name="line.18"></a>
+<FONT color="green">019</FONT>         * Frog dies from hitting the wrong bit of the home component<a name="line.19"></a>
+<FONT color="green">020</FONT>         */<a name="line.20"></a>
+<FONT color="green">021</FONT>        public static final int FROG_DEATH = 1;<a name="line.21"></a>
+<FONT color="green">022</FONT>        <a name="line.22"></a>
+<FONT color="green">023</FONT>        /**<a name="line.23"></a>
+<FONT color="green">024</FONT>         * Frog has landed in an empty cell<a name="line.24"></a>
+<FONT color="green">025</FONT>         */<a name="line.25"></a>
+<FONT color="green">026</FONT>        public static final int FROG_HOME = 2;<a name="line.26"></a>
+<FONT color="green">027</FONT>        <a name="line.27"></a>
+<FONT color="green">028</FONT>        /**<a name="line.28"></a>
+<FONT color="green">029</FONT>         * An insect has appeared in one of the cells<a name="line.29"></a>
+<FONT color="green">030</FONT>         */<a name="line.30"></a>
+<FONT color="green">031</FONT>        public static final int INSECT_ARRIVE = 3;<a name="line.31"></a>
+<FONT color="green">032</FONT>        <a name="line.32"></a>
+<FONT color="green">033</FONT>        /**<a name="line.33"></a>
+<FONT color="green">034</FONT>         * An insect has left one of the cells<a name="line.34"></a>
+<FONT color="green">035</FONT>         */<a name="line.35"></a>
+<FONT color="green">036</FONT>        public static final int INSECT_LEAVE = 4;<a name="line.36"></a>
+<FONT color="green">037</FONT>        <a name="line.37"></a>
+<FONT color="green">038</FONT>        /**<a name="line.38"></a>
+<FONT color="green">039</FONT>         * An aligator has appeared in one of the cells<a name="line.39"></a>
+<FONT color="green">040</FONT>         */<a name="line.40"></a>
+<FONT color="green">041</FONT>        public static final int ALIGATOR_ARRIVE = 5;<a name="line.41"></a>
+<FONT color="green">042</FONT>        <a name="line.42"></a>
+<FONT color="green">043</FONT>        /**<a name="line.43"></a>
+<FONT color="green">044</FONT>         * An aligator has left one of the cells<a name="line.44"></a>
+<FONT color="green">045</FONT>         */<a name="line.45"></a>
+<FONT color="green">046</FONT>        public static final int ALIGATOR_LEAVE = 6;<a name="line.46"></a>
+<FONT color="green">047</FONT>        <a name="line.47"></a>
+<FONT color="green">048</FONT>        /**<a name="line.48"></a>
+<FONT color="green">049</FONT>         * An insect has been eaten by the player's frog<a name="line.49"></a>
+<FONT color="green">050</FONT>         */<a name="line.50"></a>
+<FONT color="green">051</FONT>        public static final int INSECT_EATEN = 7;<a name="line.51"></a>
+<FONT color="green">052</FONT>    <a name="line.52"></a>
+<FONT color="green">053</FONT>        /** <a name="line.53"></a>
+<FONT color="green">054</FONT>         * Private constructor - should never be instanciated<a name="line.54"></a>
+<FONT color="green">055</FONT>         */<a name="line.55"></a>
+<FONT color="green">056</FONT>        private HomeEvent () {<a name="line.56"></a>
+<FONT color="green">057</FONT>        }<a name="line.57"></a>
+<FONT color="green">058</FONT>        <a name="line.58"></a>
+<FONT color="green">059</FONT>    }<a name="line.59"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,6 @@
+com.rattat.micro.game.frog
+com.rattat.micro.game.frog.board
+com.rattat.micro.game.frog.board.elements
+com.rattat.micro.game.frog.board.listeners
+com.rattat.micro.game.frog.sound
+com.rattat.micro.graphics

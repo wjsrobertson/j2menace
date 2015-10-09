@@ -1,0 +1,5 @@
+com.rattat.micro.game.mb
+com.rattat.micro.game.mb.controller
+com.rattat.micro.game.mb.geometry
+com.rattat.micro.game.mb.mvc.board
+com.rattat.micro.game.mb.mvc.status
